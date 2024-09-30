@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "564247101539",
+    "project_id": "allone-firat",
+    "storage_bucket": "allone-firat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564247101539:android:c283fd45fe2ef907aa7856",
+        "android_client_info": {
+          "package_name": "com.firatllone.allone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAa5tiHqNbscHJ4Tz-j-WkAmfH2UmlL5q8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

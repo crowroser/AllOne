@@ -34,6 +34,9 @@ android {
 }
 
 dependencies {
+
+    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation ("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-storage")
     implementation ("com.google.firebase:firebase-firestore")
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))

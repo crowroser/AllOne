@@ -32,6 +32,7 @@ public class Login extends AppCompatActivity {
     }
 
     @SuppressLint("MissingInflatedId")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,10 +40,18 @@ public class Login extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        // Eğer kullanıcı daha önce giriş yapmışsa, direkt HomePage'e yönlendirilir.
+        if (mAuth.getCurrentUser() != null) {
+            Intent intent = new Intent(Login.this, HomePage.class);
+            startActivity(intent);
+            finish(); // Login aktivitesini kapat
+        }
+
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
         buttonLogin = findViewById(R.id.buttonLogin);
         signIn = findViewById(R.id.signup_login);
+
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,6 +68,7 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+
     private void loginUser() {
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();

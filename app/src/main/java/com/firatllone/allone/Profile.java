@@ -124,10 +124,16 @@ public class Profile extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     fakulteList.clear();
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
-                        String fakulte = document.getId(); // Fakülte adını document ID olarak alıyoruz
-                        fakulteList.add(fakulte); // Fakülteyi listeye ekle
+                        String fakulte = document.getId();
+                        if (fakulte == null) {
+                            fakulteList.add("null"); // Eğer fakulte null ise "null" yaz
+                        } else {
+                            fakulteList.add(fakulte);
+                        }
                     }
-                    // Fakülte adapterini ayarlayın
+                    if (fakulteList.isEmpty()) {
+                        fakulteList.add("Fakülte bulunamadı");
+                    }
                     ArrayAdapter<String> fakulteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fakulteList);
                     fakulteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     fakultespinner.setAdapter(fakulteAdapter);
@@ -137,21 +143,26 @@ public class Profile extends AppCompatActivity {
                 });
     }
 
-    // Seçilen fakülteye göre bölümleri yükle
+
     private void loadBolumler(String selectedFakulte, String selectedBolum) {
         db.collection("fakulteler").document(selectedFakulte).collection("bolumler").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     bolumList.clear();
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
-                        String bolum = document.getString("name"); // Bölüm adını al
-                        bolumList.add(bolum); // Bölümü listeye ekle
+                        String bolum = document.getString("name");
+                        if (bolum == null) {
+                            bolumList.add("null"); // Eğer bolum null ise "null" yaz
+                        } else {
+                            bolumList.add(bolum);
+                        }
                     }
-                    // Bölüm adapterini ayarlayın
+                    if (bolumList.isEmpty()) {
+                        bolumList.add("Bölüm bulunamadı");
+                    }
                     ArrayAdapter<String> bolumAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, bolumList);
                     bolumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     bolumspinner.setAdapter(bolumAdapter);
 
-                    // Seçilen bölüm var ise bölüm spinnerını ayarlayın
                     if (selectedBolum != null) {
                         setSpinnerValue(bolumspinner, selectedBolum);
                     }
@@ -163,6 +174,9 @@ public class Profile extends AppCompatActivity {
 
     // Spinner'da Firestore'dan gelen veriyi seçili yapmak için yardımcı fonksiyon
     private void setSpinnerValue(Spinner spinner, String value) {
+        if (value == null) {
+            value = "null"; // Eğer value null ise "null" yaz
+        }
         for (int i = 0; i < spinner.getAdapter().getCount(); i++) {
             if (spinner.getItemAtPosition(i).toString().equals(value)) {
                 spinner.setSelection(i);
@@ -171,12 +185,13 @@ public class Profile extends AppCompatActivity {
         }
     }
 
+
     // Profil bilgilerini güncelleme metodu
     private void updateProfile() {
         String username = usernameEditText.getText().toString().trim();
-        String fakulte = fakultespinner.getSelectedItem().toString();
-        String bolum = bolumspinner.getSelectedItem().toString();
-        String sinif = sinifspinner.getSelectedItem().toString();
+        String fakulte = fakultespinner.getSelectedItem() != null ? fakultespinner.getSelectedItem().toString() : "null";
+        String bolum = bolumspinner.getSelectedItem() != null ? bolumspinner.getSelectedItem().toString() : "null";
+        String sinif = sinifspinner.getSelectedItem() != null ? sinifspinner.getSelectedItem().toString() : "null";
 
         if (!username.isEmpty()) {
             // Kullanıcı verilerini Firestore'a güncelle

@@ -6,14 +6,6 @@
     tools:context=".HomePage">
 
     <Button
-        android:id="@+id/profileButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-
-        android:text="Profil" />
-
-    <Button
         android:id="@+id/dersnotu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,4 +15,22 @@
         android:layout_marginTop="57dp"
         android:text="Dersler" />
 
+    <Button
+        android:id="@+id/profileButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+        android:text="Profil" />
+
+    <ListView
+        android:id="@+id/yemeklist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dersnotu"
+        android:layout_alignStart="@+id/dersnotu"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="57dp">
+
+    </ListView>
 </RelativeLayout>

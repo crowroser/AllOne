@@ -3,6 +3,7 @@ package com.firatllone.allone;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,13 +40,6 @@ public class Profile extends AppCompatActivity {
     private List<String> bolumList = new ArrayList<>();
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        // Geri tuşuna basıldığında önceki aktiviteye dön
-        finish();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_layout);
@@ -71,6 +65,7 @@ public class Profile extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                         @Override
                         public void onSuccess(DocumentSnapshot document) {
+
                             if (document.exists()) {
                                 String username = document.getString("username");
                                 String fakulte = document.getString("fakulte");
@@ -78,8 +73,11 @@ public class Profile extends AppCompatActivity {
                                 String sinif = document.getString("sinif");
 
                                 usernameEditText.setText(username);
+
+                                // Fakülteleri yükle ve ardından spinner değerini ayarlayın
                                 setSpinnerValue(fakultespinner, fakulte);
-                                loadBolumler(fakulte, bolum); // Seçilen fakülteye göre bölümleri yükle
+                                loadBolumler(fakulte, () -> setSpinnerValue(bolumspinner, bolum)); // Bölümleri yükle
+
                                 setSpinnerValue(sinifspinner, sinif);
                             } else {
                                 Toast.makeText(Profile.this, "Kullanıcı bilgileri bulunamadı", Toast.LENGTH_SHORT).show();
@@ -118,6 +116,16 @@ public class Profile extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        // HomePage aktivitesine dönmek için Intent oluştur
+        Intent intent = new Intent(Profile.this, HomePage.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish(); // Mevcut aktiviteyi kapat
+    }
+
+    // Firestore'dan fakülteleri yükle
     // Firestore'dan fakülteleri yükle
     private void loadFakulteler() {
         db.collection("fakulteler").get()
@@ -126,7 +134,7 @@ public class Profile extends AppCompatActivity {
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
                         String fakulte = document.getId();
                         if (fakulte == null) {
-                            fakulteList.add("null"); // Eğer fakulte null ise "null" yaz
+                            fakulteList.add("null");
                         } else {
                             fakulteList.add(fakulte);
                         }
@@ -137,21 +145,41 @@ public class Profile extends AppCompatActivity {
                     ArrayAdapter<String> fakulteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, fakulteList);
                     fakulteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     fakultespinner.setAdapter(fakulteAdapter);
+
+                    // Fakülteler yüklendikten sonra spinner değerini set et
+                    if (currentUser != null) {
+                        db.collection("users").document(currentUser.getUid())
+                                .get()
+                                .addOnSuccessListener(document -> {
+                                    if (document.exists()) {
+                                        String fakulte = document.getString("fakulte");
+                                        String bolum = document.getString("bolum");
+                                        String sinif = document.getString("sinif");
+
+                                        usernameEditText.setText(document.getString("username"));
+                                        setSpinnerValue(fakultespinner, fakulte);
+
+                                        // Fakülte seçimi tamamlandıktan sonra bölümleri yükle
+                                        loadBolumler(fakulte, () -> setSpinnerValue(bolumspinner, bolum));
+                                        setSpinnerValue(sinifspinner, sinif);
+                                    }
+                                });
+                    }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Profile.this, "Fakülteler alınamadı: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
-
-    private void loadBolumler(String selectedFakulte, String selectedBolum) {
+    // Firestore'dan bölümleri yükle
+    private void loadBolumler(String selectedFakulte, Runnable callback) {
         db.collection("fakulteler").document(selectedFakulte).collection("bolumler").get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     bolumList.clear();
                     for (DocumentSnapshot document : queryDocumentSnapshots) {
                         String bolum = document.getString("name");
                         if (bolum == null) {
-                            bolumList.add("null"); // Eğer bolum null ise "null" yaz
+                            bolumList.add("null");
                         } else {
                             bolumList.add(bolum);
                         }
@@ -163,14 +191,16 @@ public class Profile extends AppCompatActivity {
                     bolumAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     bolumspinner.setAdapter(bolumAdapter);
 
-                    if (selectedBolum != null) {
-                        setSpinnerValue(bolumspinner, selectedBolum);
+                    // Bölümler yüklendikten sonra spinner değerini set et
+                    if (callback != null) {
+                        callback.run();
                     }
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(Profile.this, "Bölümler alınamadı: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
 
     // Spinner'da Firestore'dan gelen veriyi seçili yapmak için yardımcı fonksiyon
     private void setSpinnerValue(Spinner spinner, String value) {
@@ -184,7 +214,6 @@ public class Profile extends AppCompatActivity {
             }
         }
     }
-
 
     // Profil bilgilerini güncelleme metodu
     private void updateProfile() {

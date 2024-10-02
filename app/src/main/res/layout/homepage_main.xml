@@ -1,36 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".HomePage">
 
-    <Button
-        android:id="@+id/dersnotu"
+    <!-- Profil Kısmı -->
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Profil Resmi -->
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="16dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo" />
+
+        <!-- İsim ve Kullanıcı Bilgileri -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/fakulteandbolumtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textColor="#888888"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Profil ve Ders Notu Butonları -->
+
+    <!-- Yemek Listesi -->
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout"
+        android:layout_marginTop="7dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/profileButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#FFA500"
+            android:text="Profil"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/dersnotu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:backgroundTint="#FFA500"
+            android:text="Ders Notu"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/kulupbutton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:text="Kulüpler"
+            app:rippleColor="#D50D0D" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/yemeklistTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonLayout"
+        android:layout_marginTop="32dp"
+        android:text="Yemek Listesi"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
-
-        android:layout_below="@+id/profileButton"
-        android:layout_marginTop="57dp"
-        android:text="Dersler" />
-
-    <Button
-        android:id="@+id/profileButton"
-        android:layout_width="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/yemekList"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/yemeklistTitle"
+        android:layout_marginTop="16dp" />
 
-
-        android:text="Profil" />
-
-    <ListView
-        android:id="@+id/yemeklist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/dersnotu"
-        android:layout_alignStart="@+id/dersnotu"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="57dp">
-
-    </ListView>
 </RelativeLayout>
